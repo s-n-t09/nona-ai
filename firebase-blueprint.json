@@ -1,0 +1,81 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile containing display name and age verification",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "User's chosen display name" },
+        "dateOfBirth": { "type": "string", "format": "date", "description": "User's date of birth (YYYY-MM-DD)" },
+        "isAdult": { "type": "boolean", "description": "Whether the user is 18 or older" },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "showNsfw": { "type": "boolean", "description": "Whether to show NSFW characters" },
+            "theme": { "type": "string", "enum": ["dark", "light"], "description": "UI theme" }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "dateOfBirth", "isAdult", "settings", "createdAt"]
+    },
+    "Character": {
+      "title": "Character",
+      "description": "An AI character created by a user",
+      "type": "object",
+      "properties": {
+        "creatorId": { "type": "string", "description": "UID of the user who created this character" },
+        "name": { "type": "string", "description": "Character's name" },
+        "description": { "type": "string", "description": "Short description of the character" },
+        "imageUrl": { "type": "string", "description": "URL to character's avatar image" },
+        "prompt": { "type": "string", "description": "System prompt defining the character's personality" },
+        "isPublic": { "type": "boolean", "description": "Whether the character is visible to everyone" },
+        "isNsfw": { "type": "boolean", "description": "Whether the character contains NSFW content" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["creatorId", "name", "description", "prompt", "isPublic", "isNsfw", "createdAt"]
+    },
+    "Chat": {
+      "title": "Chat",
+      "description": "A chat session between a user and a character",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the user" },
+        "characterId": { "type": "string", "description": "ID of the character" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "characterId", "createdAt", "updatedAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "A single message in a chat",
+      "type": "object",
+      "properties": {
+        "role": { "type": "string", "enum": ["user", "assistant"], "description": "Who sent the message" },
+        "content": { "type": "string", "description": "The message text" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["role", "content", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profiles"
+    },
+    "/characters/{characterId}": {
+      "schema": { "$ref": "#/entities/Character" },
+      "description": "AI characters"
+    },
+    "/chats/{chatId}": {
+      "schema": { "$ref": "#/entities/Chat" },
+      "description": "Chat sessions"
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Messages within a chat session"
+    }
+  }
+}
